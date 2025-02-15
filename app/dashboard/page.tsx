@@ -2,7 +2,7 @@
 
 import React from 'react'
 // import { MultiselectCombobox } from '@/components/ui/multiselect-combobox'
-import { ReusableMultiSelectCombobox, Option } from '@/components/ui/reusable-multiselect-combobox'
+import { MultiSelectCombobox, Option } from '@/components/ui/multiselect-combobox'
 
 const frameworks: Option[] = [
   { value: "next.js", label: "Next.js" },
@@ -19,7 +19,7 @@ const DashoardPage = () => {
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="w-full max-w-sm">
           <h1 className="text-2xl font-bold mb-4">Select Frameworks</h1>
-          <ReusableMultiSelectCombobox
+          <MultiSelectCombobox
             options={frameworks}
             placeholder="Select frameworks..."
             emptyMessage="No framework found."

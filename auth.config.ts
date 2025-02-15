@@ -5,10 +5,10 @@ import type { NextAuthConfig } from "next-auth"
 export default {
     providers: [GitHub],
     callbacks: {
-        authorized: async ({ auth }) => {
-            // Logged in users are authenticated, otherwise redirect to login page
-            return !!auth
-        },
+        // authorized: async ({ auth }) => {
+        //     // Logged in users are authenticated, otherwise redirect to login page
+        //     return !!auth
+        // },
     },
     session: {
         strategy: 'jwt'

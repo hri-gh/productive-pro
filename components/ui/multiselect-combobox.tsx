@@ -20,43 +20,39 @@ import {
 } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
 
-const frameworks = [
-    {
-        value: "next.js",
-        label: "Next.js",
-    },
-    {
-        value: "sveltekit",
-        label: "SvelteKit",
-    },
-    {
-        value: "nuxt.js",
-        label: "Nuxt.js",
-    },
-    {
-        value: "remix",
-        label: "Remix",
-    },
-    {
-        value: "astro",
-        label: "Astro",
-    },
-]
+export interface Option {
+    value: string
+    label: string
+}
 
-export function MultiselectCombobox() {
+interface MultiSelectComboboxProps {
+    options?: Option[]
+    placeholder?: string
+    emptyMessage?: string
+    onSelectionChange?: (selectedValues: string[]) => void
+}
+
+export function MultiSelectCombobox({
+    options = [],
+    placeholder = "Select options...",
+    emptyMessage = "No option found.",
+    onSelectionChange,
+}: MultiSelectComboboxProps) {
     const [open, setOpen] = React.useState(false)
     const [selectedValues, setSelectedValues] = React.useState<string[]>([])
 
     const handleSelect = (currentValue: string) => {
-        setSelectedValues((prev) =>
-            prev.includes(currentValue)
-                ? prev.filter((value) => value !== currentValue)
-                : [...prev, currentValue]
-        )
+        const newSelectedValues = selectedValues.includes(currentValue)
+            ? selectedValues.filter((value) => value !== currentValue)
+            : [...selectedValues, currentValue]
+        setSelectedValues(newSelectedValues)
+        onSelectionChange?.(newSelectedValues)
     }
 
     const handleRemove = (valueToRemove: string) => {
-        setSelectedValues((prev) => prev.filter((value) => value !== valueToRemove))
+        const newSelectedValues = selectedValues.filter((value) => value !== valueToRemove)
+        setSelectedValues(newSelectedValues)
+        onSelectionChange?.(newSelectedValues)
     }
 
     return (
@@ -66,13 +62,13 @@ export function MultiselectCombobox() {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[300px] h-auto justify-between"
+                    className="w-full justify-between"
                 >
                     {selectedValues.length > 0 ? (
-                        <div className="flex flex-wrap gap-1 max-w-[250px]  overflow-hidden">
+                        <div className="flex flex-wrap gap-1 max-w-[calc(100%-2rem)] overflow-hidden">
                             {selectedValues.map((value) => (
                                 <Badge key={value} variant="secondary" className="mr-1">
-                                    {frameworks.find((framework) => framework.value === value)?.label}
+                                    {options.find((option) => option.value === value)?.label || value}
                                     <button
                                         className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                                         onKeyDown={(e) => {
@@ -92,30 +88,30 @@ export function MultiselectCombobox() {
                             ))}
                         </div>
                     ) : (
-                        "Select frameworks..."
+                        placeholder
                     )}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[300px] p-0">
+            <PopoverContent className="w-full p-0">
                 <Command>
-                    <CommandInput placeholder="Search framework..." />
+                    <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
                     <CommandList>
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>{emptyMessage}</CommandEmpty>
                         <CommandGroup>
-                            {frameworks.map((framework) => (
+                            {options.map((option) => (
                                 <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
+                                    key={option.value}
+                                    value={option.value}
                                     onSelect={handleSelect}
                                 >
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            selectedValues.includes(framework.value) ? "opacity-100" : "opacity-0"
+                                            selectedValues.includes(option.value) ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {framework.label}
+                                    {option.label}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

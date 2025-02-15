@@ -9,7 +9,29 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
+// title, id, customUrl, thumbnails:{medium:}, description
+
+model YoutubeChannelLabel {
+  id       String           @id @default(auto()) @map("_id") @db.ObjectId
+  labelName    String
+  channels YoutubeChannel[]
+
+  @@map("youtube-channel-labels")
+}
+
+model YoutubeChannel {
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
+  channelTitle       String
+  channelId          String
+  customUrl          String
+  channelDescription String
+  channelThumbnail   String
+  label              YoutubeChannelLabel @relation(fields: [labelId], references: [id])
+  labelId            String               @db.ObjectId
+
+  @@map("youtube-channels")
+}
